@@ -1,0 +1,18 @@
+# 缓存清理名单 (ENABLE_CLEAN=1 时, 每次开机 pm clear 一次)
+# 云控规则缓存在这些组件的数据里，清掉即失效
+# 会丢失这些组件的本地设置/统计，介意就关掉 ENABLE_CLEAN
+
+com.oplus.cosa
+com.oplus.deepthinker
+com.oplus.metis
+com.oplus.athena
+com.oplus.aiunit
+com.coloros.sceneservice
+com.oplus.powermonitor
+com.oplus.battery
+com.oplus.safecenter
+com.coloros.phonemanager
+com.miui.joyose
+
+# ColorOS Watch: 清掉 RUS 已下发的云控配置库(含充电/NFC 等 filterName)
+com.heytap.wearable.romupdate

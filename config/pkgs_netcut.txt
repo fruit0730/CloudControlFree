@@ -1,0 +1,24 @@
+# 断网名单 (ENABLE_NETCUT=1 时生效, iptables 按 UID  DROP 出站)
+# 这些组件多与系统功能耦合，保留安装但切断网络，云控规则就拉不下来
+# 一行一个包名，不存在的包自动跳过
+
+# ColorOS 云控/调度/遥测 (社区 ColorOS14 去云控模块同款目标)
+com.oplus.cosa
+com.oplus.deepthinker
+com.oplus.metis
+com.oplus.athena
+com.oplus.aiunit
+com.coloros.sceneservice
+com.oplus.powermonitor
+com.oplus.battery
+com.oplus.safecenter
+com.coloros.phonemanager
+com.heytap.openid
+
+# MIUI 云控调度
+# 注意: 不禁用 joyose 本体(MIUI14+ 禁了会丢白名单调度)，只断网+清缓存
+com.miui.joyose
+com.miui.powerkeeper
+
+# ColorOS Watch (OWW221 实测存在)
+com.heytap.wearable.powermanager

@@ -1,0 +1,12 @@
+# OTA 拦截名单 (ENABLE_OTA=1 时: 禁用 + 断网)
+# 防厂商云控强制升级/灰度推送
+
+# ColorOS Watch (OPPO Watch S 实测 OTA 客户端)
+com.heytap.wearable.ota
+
+# ColorOS / OPPO
+com.oplus.ota
+com.oplus.romupdate
+
+# MIUI
+com.android.updater

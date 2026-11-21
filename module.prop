@@ -1,0 +1,6 @@
+id=qyk
+name=去云控 · CloudControl Free
+version=v1.2.0
+versionCode=3
+author=ClassFruit (classfruit.cn)
+description=全功能去云控：开机自动生效(pm一就绪即应用,不依赖手动点按钮) + hosts域名拦截 + 云控组件断网(iptables) + 组件禁用(跨重启可还原) + 云控缓存/RUS配置清理 + OTA升级拦截 + 充电云控(RUS下发链路切断+限流节点监视/回写) + 属性伪装 + 守护重应用 + PAUSE暂停 + 卸载自动还原。支持 ColorOS/OPPO/一加/realme/MIUI/华为/vivo。配置 /data/adb/qyk，Action按钮=立即重应用。开发者主页 classfruit.cn

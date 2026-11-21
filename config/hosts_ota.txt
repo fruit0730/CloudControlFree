@@ -1,0 +1,25 @@
+# OTA 拦截域名 (ENABLE_OTA=1 时追加)
+# 防云控强制升级/灰度包推送
+
+# ColorOS Watch OTA (iota 查询接口 + allawnfs CDN)
+0.0.0.0 iota.coloros.com
+0.0.0.0 iota-test.wanyol.com
+0.0.0.0 gauss-otacostauto-cn.allawnfs.com
+0.0.0.0 gauss-otacostmanual-cn.allawnfs.com
+
+# ColorOS 升级检测/组件更新
+0.0.0.0 component-ota-fs.coloros.com
+0.0.0.0 iacl-ota.coloros.com
+0.0.0.0 isau.coloros.com
+0.0.0.0 ifsau.coloros.com
+0.0.0.0 ifsau-eu.coloros.com
+0.0.0.0 ifsau-in.coloros.com
+
+# MIUI 更新
+0.0.0.0 update.miui.com
+0.0.0.0 bigota.d.miui.com
+0.0.0.0 hugeota.d.miui.com
+0.0.0.0 file.update.mi.com
+
+# vivo 升级
+0.0.0.0 sysupgrade.vivo.com.cn

@@ -1,0 +1,24 @@
+# 激进名单 (ENABLE_AGGRESSIVE=1 时: 禁用 + 断网)
+# 推送通道/商店/云同步也是云控指令的载体，但断了影响正常功能
+# 默认关闭；需要彻底去云控再打开
+
+# 推送 (断了可能收不到厂商通道通知)
+com.heytap.mcs
+com.heytap.push
+com.xiaomi.xmsf
+
+# 云服务/云同步
+com.heytap.cloud
+com.oppo.cloud
+com.miui.cloudservice
+com.miui.cloudbackup
+
+# 应用商店 (断了无法在线装/更新应用)
+com.heytap.market
+com.oppo.market
+com.xiaomi.market
+com.heytap.wearable.market
+com.heytap.wearable.themestore
+
+# 快应用
+com.nearme.instant.platform

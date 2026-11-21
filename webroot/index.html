@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>去云控 · ClassFruit</title>
+<style>
+:root{color-scheme:dark}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#101418;color:#e6e9ec;font:15px/1.6 system-ui,sans-serif;padding:16px;max-width:640px;margin:0 auto}
+h1{font-size:20px;margin-bottom:2px}
+.sub{color:#8a94a0;font-size:12px;margin-bottom:16px}
+.sub a{color:#5aa9ff;text-decoration:none}
+.card{background:#1a2129;border:1px solid #2a333e;border-radius:12px;padding:14px;margin-bottom:14px}
+.row{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid #232c36}
+.row:last-child{border-bottom:0}
+.row small{display:block;color:#8a94a0;font-size:12px}
+.sw{position:relative;width:46px;height:26px;flex:none}
+.sw input{opacity:0;width:0;height:0}
+.sl{position:absolute;inset:0;background:#3a4550;border-radius:26px;transition:.2s;cursor:pointer}
+.sl:before{content:"";position:absolute;width:20px;height:20px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.2s}
+.sw input:checked+.sl{background:#2f9e5f}
+.sw input:checked+.sl:before{transform:translateX(20px)}
+.num{width:80px;background:#101418;border:1px solid #2a333e;color:#e6e9ec;border-radius:8px;padding:6px;text-align:right}
+.btns{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+button{background:#2f9e5f;color:#fff;border:0;border-radius:10px;padding:12px;font-size:15px;cursor:pointer}
+button.sec{background:#2a333e}
+button.warn{background:#8a4b2f}
+button:disabled{opacity:.4;cursor:default}
+pre{background:#0c0f13;border:1px solid #2a333e;border-radius:10px;padding:10px;font-size:12px;white-space:pre-wrap;word-break:break-all;max-height:300px;overflow:auto;margin-top:10px;display:none}
+#toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%);background:#2a333e;padding:10px 18px;border-radius:20px;font-size:13px;opacity:0;transition:.3s;pointer-events:none;max-width:90vw}
+#toast.show{opacity:1}
+#noapi{display:none;background:#5a2a2a;border:1px solid #8a3a3a;border-radius:10px;padding:10px;font-size:13px;margin-bottom:14px}
+</style>
+</head>
+<body>
+<h1>去云控 · CloudControl Free</h1>
+<div class="sub">by ClassFruit — <a href="https://classfruit.cn">classfruit.cn</a> · 配置 /data/adb/qyk/config.conf</div>
+<div id="noapi">当前管理器不支持 WebUI 执行接口，请用模块 Action 按钮或直接编辑 config.conf。</div>
+
+<div class="card" id="switches"></div>
+
+<div class="card">
+  <div class="row"><div>守护间隔(秒)<small>0 = 关闭守护循环</small></div><input class="num" id="GUARD_INTERVAL" type="number" min="0" step="30"></div>
+</div>
+
+<div class="btns">
+  <button id="save">保存并应用</button>
+  <button id="restore" class="warn">暂停并还原</button>
+  <button id="status" class="sec">运行状态</button>
+  <button id="log" class="sec">查看日志</button>
+</div>
+<pre id="out"></pre>
+<div id="toast"></div>
+
+<script>
+const CONF='/data/adb/qyk/config.conf';
+const QYK='/data/adb/modules/qyk/qyk.sh';
+const KEYS=[
+ ['ENABLE_HOSTS','hosts 域名拦截','云控配置下发/遥测域名指向 0.0.0.0'],
+ ['ENABLE_DISABLE','禁用遥测组件','纯上报/注册类组件, 无用户功能'],
+ ['ENABLE_NETCUT','云控组件断网','iptables 按 UID 拦截, 保留组件'],
+ ['ENABLE_CLEAN','清理云控缓存','开机 pm clear 一次云控规则缓存'],
+ ['ENABLE_OTA','拦截 OTA 升级','防云控强制升级/灰度推送'],
+ ['ENABLE_PROPS','属性伪装','props.conf, 默认空'],
+ ['ENABLE_CHARGE','充电云控处理','切断 RUS 下发 + 采样限流节点到 charge.log'],
+ ['CHARGE_FIX','回写充电限流','仅电池温度低于闸门时写, 默认关'],
+ ['ENABLE_AGGRESSIVE','激进模式','连推送/商店/云同步一起断, 慎用'],
+ ['PAUSE','暂停全部拦截','1=开机什么都不做, 保留配置'],
+ ['ENABLE_LOG','记录日志','/data/adb/qyk/qyk.log']
+];
+let seq=0, confText='';
+const $=id=>document.getElementById(id);
+function toast(m){const t=$('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200)}
+function exec(cmd){
+  return new Promise((res,rej)=>{
+    const api=window.ksu||window.magisk||window.apatch;
+    if(!api||typeof api.exec!=='function')return rej(new Error('no-api'));
+    const n='__qyk_cb_'+(seq++);
+    window[n]=(errno,stdout,stderr)=>{delete window[n];errno===0?res(stdout):rej(new Error(stderr||('exit '+errno)))};
+    try{api.exec(cmd,'{}',n)}catch(e){delete window[n];rej(e)}
+  });
+}
+function render(){
+  $('switches').innerHTML=KEYS.map(([k,t,d])=>{
+    const v=(confText.match(new RegExp('^'+k+'=(\\d)','m'))||[])[1]||'0';
+    return `<div class="row"><div>${t}<small>${d}</small></div><label class="sw"><input type="checkbox" id="${k}" ${v==='1'?'checked':''}><span class="sl"></span></label></div>`;
+  }).join('');
+  $('GUARD_INTERVAL').value=(confText.match(/^GUARD_INTERVAL=(\d+)/m)||[])[1]||'300';
+}
+async function load(){
+  try{confText=await exec('cat '+CONF);render()}
+  catch(e){$('noapi').style.display='block';document.querySelectorAll('button,input').forEach(x=>x.disabled=true)}
+}
+async function save(){
+  let t=confText;
+  for(const [k] of KEYS){const v=$(k).checked?'1':'0';t=t.replace(new RegExp('^'+k+'=.*$','m'),k+'='+v)}
+  t=t.replace(/^GUARD_INTERVAL=.*$/m,'GUARD_INTERVAL='+($('GUARD_INTERVAL').value||'0'));
+  try{
+    await exec("cat > "+CONF+" <<'QYKEOF'\n"+t+"\nQYKEOF");
+    confText=t;
+    toast('已保存, 应用中…');
+    const r=await exec('sh '+QYK+' apply');
+    $('out').style.display='block';$('out').textContent=r;toast('已生效');
+  }catch(e){toast('失败: '+e.message)}
+}
+async function run(cmd,msg){
+  try{const r=await exec(cmd);$('out').style.display='block';$('out').textContent=r||'(无输出)';toast(msg)}
+  catch(e){toast('失败: '+e.message)}
+}
+$('save').onclick=save;
+$('restore').onclick=()=>run('sh '+QYK+' restore','已还原');
+$('status').onclick=()=>run('sh '+QYK+' status','');
+$('log').onclick=()=>run('tail -n 60 /data/adb/qyk/qyk.log','');
+load();
+</script>
+</body>
+</html>

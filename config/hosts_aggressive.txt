@@ -1,0 +1,20 @@
+# 激进拦截域名 (ENABLE_AGGRESSIVE=1 时追加)
+# 推送长连接/商店/云同步 —— 云控指令也走这些通道
+# 断了会影响: 厂商推送通知、商店在线下载、云同步
+
+# HeyTap 推送/MCS 长连接
+0.0.0.0 push.heytapmobi.com
+0.0.0.0 httpdns-push.heytapmobile.com
+0.0.0.0 conn1.coloros.com
+0.0.0.0 conn2.coloros.com
+0.0.0.0 conn3.coloros.com
+0.0.0.0 conn4.coloros.com
+
+# 小米推送
+0.0.0.0 resolver.msg.xiaomi.net
+0.0.0.0 app.chat.xiaomi.net
+0.0.0.0 cn.app.chat.xiaomi.net
+
+# 小米商店
+0.0.0.0 market.xiaomi.com
+0.0.0.0 app.market.xiaomi.com

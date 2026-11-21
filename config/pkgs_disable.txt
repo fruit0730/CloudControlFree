@@ -1,0 +1,25 @@
+# 禁用名单 (ENABLE_DISABLE=1 时生效)
+# 只放纯遥测/上报/云控注册类组件，禁了不影响用户功能
+# 一行一个包名，# 开头是注释，不存在的包自动跳过
+#
+# 注意: 统计上报服务(com.*.statistics.rom)故意不放这里!
+# OWW221 实测: 禁用后其它 app 仍不停 startService 它, 12 分钟产生 2068 条
+# "Unable to start service ... not found", 把 system_server 顶到 76~102% CPU、
+# servicemanager 25~30%、logd 11~16%, 明显耗电。
+# 这类包保持启用, 上传域名已由 hosts_core.txt 拦死, 效果一样但不制造调用风暴。
+# 模块还带自动回退: 万一某个包禁用后引发风暴, storm_check 会把它恢复启用并记入
+# state_storm_backoff.txt, 之后不再禁用它。
+
+# ColorOS / OPPO / 一加 / realme
+com.oplus.onetrace
+com.coloros.activation
+com.coloros.bootreg
+
+# ColorOS Watch (OWW221 实测存在, 且无人反复调用)
+com.heytap.wearable.romupdate
+com.heytap.wearable.autoregist
+com.heytap.wearable.logkit
+
+# MIUI / HyperOS
+com.miui.analytics
+com.miui.systemAdSolution
